@@ -1,0 +1,27 @@
+{
+   "name": "validadores",
+   "abstract": "Extensao que contem validadores de CNPJ, CPF",
+   "description": "Extensao que contem funcoes para facilitar o uso de validadores de CNPJ, CPF utilizados no Brasil",
+   "version": "0.0.1",
+   "maintainer": "Dickson S. Guedes <guedes@guedesoft.net>",
+   "license": "postgresql",
+   "provides": {
+      "validadores": {
+         "abstract": "Extensao que contem validadores de CNPJ, CPF",
+         "file": "sql/validadores.sql",
+         "docfile": "doc/validadores.md",
+         "version": "0.0.1"
+      }
+   },
+   "release_status": "unstable",
+
+   "generated_by": "Dickson S. Guedes <guedes@guedesoft.net>",
+
+
+   "tags": [ "validadores","cpf","cnpj","rg","digito verificador" ],
+
+   "meta-spec": {
+      "version": "1.0.0",
+      "url": "http://pgxn.org/meta/spec.txt"
+   }
+}

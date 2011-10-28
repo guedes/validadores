@@ -1,0 +1,4 @@
+# validadores extension
+comment = 'Extensao que contem validadores de CNPJ, CPF'
+default_version = '0.0.1'
+relocatable = true
