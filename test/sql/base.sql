@@ -3,23 +3,29 @@ BEGIN;
 \i sql/validadores.sql
 \set ECHO all
 
--- You should write your tests
+SELECT cpf_valido(59328253241);
 
-SELECT validadores('foo', 'bar');
+SELECT 59328253241 #? AS cpf_valido;
+SELECT 37821042773 #? AS cpf_valido;
+SELECT 91416742433 #? AS cpf_valido;
+SELECT 91416000433 #? AS cpf_valido;
+SELECT 37821042003 #? AS cpf_valido;
+SELECT NOT 37821042003 #? AS cpf_valido;
+SELECT NOT 91416000433 #? AS cpf_valido;
 
-SELECT 'foo' #? 'bar' AS arrowop;
-
-CREATE TABLE ab (
-    a_field validadores
+CREATE TABLE pessoa (
+    nro_cpf cpf
 );
 
-INSERT INTO ab VALUES('foo' #? 'bar');
-SELECT (a_field).a, (a_field).b FROM ab;
+INSERT INTO pessoa VALUES(88229346798);
+INSERT INTO pessoa VALUES(45476684425);
 
-SELECT (validadores('foo', 'bar')).a;
-SELECT (validadores('foo', 'bar')).b;
+SAVEPOINT cpf_invalido;
+INSERT INTO pessoa VALUES(45076684425);
+ROLLBACK TO cpf_invalido;
 
-SELECT ('foo' #? 'bar').a;
-SELECT ('foo' #? 'bar').b;
+SAVEPOINT cpf_invalido;
+INSERT INTO pessoa VALUES(81249396798);
+ROLLBACK TO cpf_invalido;
 
 ROLLBACK;

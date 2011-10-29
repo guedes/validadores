@@ -1,49 +1,63 @@
 \set ECHO 0
--- You should write your tests
-SELECT validadores('foo', 'bar');
- validadores 
--------------
- (foo,bar)
+SELECT cpf_valido(59328253241);
+ cpf_valido 
+------------
+ t
 (1 row)
 
-SELECT 'foo' #? 'bar' AS arrowop;
-  arrowop  
------------
- (foo,bar)
+SELECT 59328253241 #? AS cpf_valido;
+ cpf_valido 
+------------
+ t
 (1 row)
 
-CREATE TABLE ab (
-    a_field validadores
+SELECT 37821042773 #? AS cpf_valido;
+ cpf_valido 
+------------
+ t
+(1 row)
+
+SELECT 91416742433 #? AS cpf_valido;
+ cpf_valido 
+------------
+ t
+(1 row)
+
+SELECT 91416000433 #? AS cpf_valido;
+ cpf_valido 
+------------
+ f
+(1 row)
+
+SELECT 37821042003 #? AS cpf_valido;
+ cpf_valido 
+------------
+ f
+(1 row)
+
+SELECT NOT 37821042003 #? AS cpf_valido;
+ cpf_valido 
+------------
+ t
+(1 row)
+
+SELECT NOT 91416000433 #? AS cpf_valido;
+ cpf_valido 
+------------
+ t
+(1 row)
+
+CREATE TABLE pessoa (
+    nro_cpf cpf
 );
-INSERT INTO ab VALUES('foo' #? 'bar');
-SELECT (a_field).a, (a_field).b FROM ab;
-  a  |  b  
------+-----
- foo | bar
-(1 row)
-
-SELECT (validadores('foo', 'bar')).a;
-  a  
------
- foo
-(1 row)
-
-SELECT (validadores('foo', 'bar')).b;
-  b  
------
- bar
-(1 row)
-
-SELECT ('foo' #? 'bar').a;
-  a  
------
- foo
-(1 row)
-
-SELECT ('foo' #? 'bar').b;
-  b  
------
- bar
-(1 row)
-
+INSERT INTO pessoa VALUES(88229346798);
+INSERT INTO pessoa VALUES(45476684425);
+SAVEPOINT cpf_invalido;
+INSERT INTO pessoa VALUES(45076684425);
+ERROR:  value for domain cpf violates check constraint "cpf_check"
+ROLLBACK TO cpf_invalido;
+SAVEPOINT cpf_invalido;
+INSERT INTO pessoa VALUES(81249396798);
+ERROR:  value for domain cpf violates check constraint "cpf_check"
+ROLLBACK TO cpf_invalido;
 ROLLBACK;

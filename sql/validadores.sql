@@ -10,22 +10,52 @@
 
 SET client_min_messages = warning;
 
--- If your extension will create a type you can
--- do somenthing like this
-CREATE TYPE validadores AS ( a text, b text );
-
--- Maybe you want to create some function, so you can use
--- this as an example
-CREATE OR REPLACE FUNCTION validadores (text, text)
-RETURNS validadores LANGUAGE SQL AS 'SELECT ROW($1, $2)::validadores';
-
--- Sometimes it is common to use special operators to
--- work with your new created type, you can create
--- one like the command bellow if it is applicable
--- to your case
+CREATE OR REPLACE FUNCTION cpf_valido(numeric)
+RETURNS BOOLEAN 
+LANGUAGE SQL 
+COST 10
+IMMUTABLE STRICT
+AS 
+$_$
+	with
+	cpf as (
+	   select $1 as numero
+	),
+	cpf_formatado as (
+	   select lpad(cpf.numero::text,11,'0') as numero from cpf
+	),
+	matriz as (
+	   select unnest( string_to_array( cpf_formatado.numero, null ) ) as valor from cpf_formatado
+	),
+	digitos_por_posicao_1 as (
+	   select row_number() over () as posicao, valor::int from matriz
+	),
+	digitos_por_posicao_2 as (
+	   select posicao - 1 as posicao, valor from digitos_por_posicao_1
+	),
+	digito_1 as (
+	   select sum(posicao*valor) as soma, sum(posicao*valor) % 11 as resto from digitos_por_posicao_1 where posicao<=9
+	),
+	digito_2 as (
+	   select sum(posicao*valor) as soma, sum(posicao*valor) % 11 as resto from digitos_por_posicao_2 where posicao<=9
+	),
+	cpf_esperado as (
+	select array_to_string(array_agg(valor),'')::numeric as numero 
+	from
+	  (
+	   select valor from digitos_por_posicao_1 where posicao <=9
+	   union all
+	   select resto from digito_1
+	   union all
+	   select resto from digito_2
+	  ) as foo
+	)
+	select distinct cpf.numero = cpf_esperado.numero from cpf, cpf_esperado;
+$_$;
 
 CREATE OPERATOR #? (
-	LEFTARG   = text,
-	RIGHTARG  = text,
-	PROCEDURE = validadores
+	LEFTARG   = numeric,
+	PROCEDURE = cpf_valido
 );
+
+CREATE DOMAIN cpf AS numeric CHECK ( cpf_valido(VALUE) );
