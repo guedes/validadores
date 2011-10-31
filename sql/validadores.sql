@@ -25,7 +25,7 @@ $_$
 	   select lpad(cpf.numero::text,11,'0') as numero from cpf
 	),
 	matriz as (
-	   select unnest( string_to_array( cpf_formatado.numero, null ) ) as valor from cpf_formatado
+	   select regexp_split_to_table( cpf_formatado.numero, E'\\s*' ) as valor from cpf_formatado
 	),
 	digitos_por_posicao_1 as (
 	   select row_number() over () as posicao, valor::int from matriz

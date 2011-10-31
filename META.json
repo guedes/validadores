@@ -2,7 +2,7 @@
    "name": "validadores",
    "abstract": "Extensao que contem validadores de CNPJ, CPF",
    "description": "Extensao que contem funcoes para facilitar o uso de validadores de CNPJ, CPF utilizados no Brasil",
-   "version": "0.0.1",
+   "version": "0.0.2",
    "maintainer": "Dickson S. Guedes <guedes@guedesoft.net>",
    "license": "postgresql",
    "provides": {
@@ -10,7 +10,7 @@
          "abstract": "Extensao que contem validadores de CNPJ, CPF",
          "file": "sql/validadores.sql",
          "docfile": "doc/validadores.md",
-         "version": "0.0.1"
+         "version": "0.0.2"
       }
    },
    "release_status": "unstable",
